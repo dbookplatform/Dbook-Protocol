@@ -1,12 +1,12 @@
 /**
- *Submitted for verification at Etherscan.io on 2021-01-19
+ *Submitted for verification at Etherscan.io on 2021-01-20
 */
 
 pragma solidity ^0.4.24;
 
 // ----------------------------------------------------------------------------
 //
-// Deployed to : 0xc86E0c7e55160B76f72741f3059E2961C840dBa6
+// Deployed to : 0xe3FaF436bC9144A9eB6Db8BB93381Ca9f50Cb2eF
 // Symbol      : LegacyDBK
 // Name        : LegacyDBK
 // Total supply: 10 000
@@ -118,8 +118,8 @@ contract LegacyDBKToken is ERC20Interface, Owned, SafeMath {
         name = "LegacyDBK";
         decimals = 18;
         _totalSupply = 10000000000000000000000;
-        balances[0xc86E0c7e55160B76f72741f3059E2961C840dBa6] = _totalSupply;
-        emit Transfer(address(0), 0xc86E0c7e55160B76f72741f3059E2961C840dBa6, _totalSupply);
+        balances[0xe3FaF436bC9144A9eB6Db8BB93381Ca9f50Cb2eF] = _totalSupply;
+        emit Transfer(address(0), 0xe3FaF436bC9144A9eB6Db8BB93381Ca9f50Cb2eF, _totalSupply);
     }
 
 

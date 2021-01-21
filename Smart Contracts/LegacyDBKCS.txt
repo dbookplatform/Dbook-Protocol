@@ -1,9 +1,5 @@
 /**
- *Submitted for verification at Etherscan.io on 2021-01-19
-*/
-
-/**
- *Submitted for verification at Etherscan.io on 2020-12-25
+ *Submitted for verification at Etherscan.io on 2021-01-20
 */
 
 /*Automatic Crowdsale contract that sends users tokens when they deposit ETH*/
@@ -157,7 +153,7 @@ contract ReentrancyGuard {
     }
 }
 
-contract LEGACECSNEW is Context, ReentrancyGuard{
+contract LegacyDBKCS is Context, ReentrancyGuard{
     
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
@@ -182,16 +178,16 @@ contract LEGACECSNEW is Context, ReentrancyGuard{
     
     
     
-    uint256 public minimumBuyAmount = 10000000000000000;
-    uint256 public maximumBuyAmount = 200000000000000000;
+    uint256 public minimumBuyAmount = 100000000000000000;
+    uint256 public maximumBuyAmount = 20000000000000000000;
     address payable public walletAddress;
     event TokensPurchased(address indexed to, uint256 amount);
     
     constructor () public {
         governance = tx.origin;
         rate = uint256(17);
-        walletAddress = 0xc86E0c7e55160B76f72741f3059E2961C840dBa6; //TEAM
-        tokenAddress = IERC20(0x8A1209D8cDd32558726E66aF2166f612f2892fec);
+        walletAddress = 0xe3FaF436bC9144A9eB6Db8BB93381Ca9f50Cb2eF; //TEAM
+        tokenAddress = IERC20(0x6BCA053618c6A04D1bB9A51ed7503eF104D35A1a);
     }
     
     function () external payable {
@@ -210,7 +206,7 @@ contract LEGACECSNEW is Context, ReentrancyGuard{
     
     function buy() public payable {
         
-         if((capreachedaddress[msg.sender]._amount > 200000000000000000) || ((capreachedaddress[msg.sender]._amount).add(msg.value)) > 200000000000000000){
+         if((capreachedaddress[msg.sender]._amount > 20000000000000000000) || ((capreachedaddress[msg.sender]._amount).add(msg.value)) > 20000000000000000000){
             capreachedaddress[msg.sender]._limitReached=true;
         }
     
@@ -218,7 +214,7 @@ contract LEGACECSNEW is Context, ReentrancyGuard{
         
         //require((block.timestamp > startTime ) && (block.timestamp < endTime)  , "Token Crowdsate is not active");
         uint256 weiValue = msg.value;
-        require((weiValue >= minimumBuyAmount) &&(weiValue<= maximumBuyAmount), "Minimum amount is 0.1 eth and Maximum amount is 0.2 Eth");
+        require((weiValue >= minimumBuyAmount) &&(weiValue<= maximumBuyAmount), "Minimum amount is 0.1 eth and Maximum amount is 20 Eth");
         uint256 amount = weiValue.mul(rate);
         _weiRaised = _weiRaised.add(weiValue);
         IERC20 token = IERC20(tokenAddress);
