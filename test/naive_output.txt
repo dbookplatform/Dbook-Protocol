@@ -1,0 +1,79 @@
+*Account 3 staked 47 DBK on day 0
+
+	 ==== Day 0 Rewards ==== 
+	Account 3 earned: 0 Reward Tokens
+
+
+	 *Account 4 staked 15 DBK on day 1
+
+	 ==== Day 1 Rewards ==== 
+	Account 3 earned: 0.6768589856417012 Reward Tokens
+	Account 4 earned: 0 Reward Tokens
+
+
+	 *Account 5 staked 16 DBK on day 2
+
+	 ==== Day 2 Rewards ==== 
+	Account 3 earned: 1.0760260066899954 Reward Tokens
+	Account 4 earned: 0.17170528400995974 Reward Tokens
+	Account 5 earned: 0 Reward Tokens
+
+
+	 *Account 6 staked 33 DBK on day 3
+
+	 ==== Day 3 Rewards ==== 
+	Account 3 earned: 2.268374773582951 Reward Tokens
+	Account 4 earned: 0.24131553428426772 Reward Tokens
+	Account 5 earned: 0.12870161828494278 Reward Tokens
+	Account 6 earned: 0 Reward Tokens
+
+
+	 *Account 7 staked 9 DBK on day 4
+
+	 ==== Day 4 Rewards ==== 
+	Account 3 earned: 5.595335234787976 Reward Tokens
+	Account 4 earned: 0.6696531911375203 Reward Tokens
+	Account 5 earned: 0.23809937169310535 Reward Tokens
+	Account 6 earned: 0.2455413979827874 Reward Tokens
+	Account 7 earned: 0 Reward Tokens
+
+
+	 *Account 8 staked 38 DBK on day 5
+
+	 ==== Day 5 Rewards ==== 
+	Account 3 earned: 10.624041947122706 Reward Tokens
+	Account 4 earned: 1.356258319519698 Reward Tokens
+	Account 5 earned: 0.5425038510481176 Reward Tokens
+	Account 6 earned: 0.3729721170509087 Reward Tokens
+	Account 7 earned: 0.050859539820671616 Reward Tokens
+	Account 8 earned: 0 Reward Tokens
+
+
+
+	 ==== Day 6 Rewards ==== 
+	Account 3 earned: 25.49768099926153 Reward Tokens
+	Account 4 earned: 3.390643836648351 Reward Tokens
+	Account 5 earned: 1.4466755408210112 Reward Tokens
+	Account 6 earned: 1.1189141927867428 Reward Tokens
+	Account 7 earned: 0.10171907964134323 Reward Tokens
+	Account 8 earned: 0.2147402792428357 Reward Tokens
+
+
+
+	 ==== Day 7 Rewards ==== 
+	Account 3 earned: 29.736309942399675 Reward Tokens
+	Account 4 earned: 4.067020795659757 Reward Tokens
+	Account 5 earned: 1.8074099189604278 Reward Tokens
+	Account 6 earned: 1.490921520243016 Reward Tokens
+	Account 7 earned: 0.15244735156719869 Reward Tokens
+	Account 8 earned: 0.4289263162631144 Reward Tokens
+
+
+
+	 ==== Day 8 Rewards ==== 
+	Account 3 earned: 29.736309942399675 Reward Tokens
+	Account 4 earned: 4.067020795659757 Reward Tokens
+	Account 5 earned: 1.8074099189604278 Reward Tokens
+	Account 6 earned: 1.490921520243016 Reward Tokens
+	Account 7 earned: 0.15244735156719869 Reward Tokens
+	Account 8 earned: 0.4289263162631144 Reward Tokens
