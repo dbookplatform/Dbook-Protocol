@@ -2,8 +2,6 @@
 
 pragma solidity >=0.6.0 <=0.8.0;
 
-import "hardhat/console.sol";
-
 import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/GSN/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
@@ -17,10 +15,14 @@ interface IDBKToken is IERC20Upgradeable {
     function mint(address to, uint256 amount) external returns (bool);
 }
 
-
-contract DBKCrowdsale is Initializable, PausableUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable {
+contract DBKCrowdsale is
+    Initializable,
+    PausableUpgradeable,
+    AccessControlUpgradeable,
+    ReentrancyGuardUpgradeable
+{
     using SafeMathUpgradeable for uint256;
-	  using SafeERC20Upgradeable for IERC20Upgradeable;
+    using SafeERC20Upgradeable for IERC20Upgradeable;
 
     // Setting the admin role
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
@@ -46,55 +48,77 @@ contract DBKCrowdsale is Initializable, PausableUpgradeable, AccessControlUpgrad
     //total raised
     uint256 public amountRaised;
 
-    event TokensPurchased(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
+    event TokensPurchased(
+        address indexed purchaser,
+        address indexed beneficiary,
+        uint256 value,
+        uint256 amount
+    );
     event RateChange(uint256 rate);
     event CapChange(uint256 rate);
     event PaymentTokenChanged(address token);
     event adminAdded(address admin);
     event AdminRescueTokens(address token, address recipient, uint256 amount);
 
-    function initialize (uint256 _rate, address payable _wallet, address _DBK, address _admin, uint256 _cap, address _stablecoin) public initializer {
+    function initialize(
+        uint256 _rate,
+        address payable _wallet,
+        address _DBK,
+        address _admin,
+        uint256 _cap,
+        address _stablecoin
+    ) public initializer {
         __Pausable_init();
         __AccessControl_init();
 
         require(_rate > 0, "DBKCrowdsale: rate is 0");
-        require(_wallet != address(0), "DBKCrowdsale: wallet is the zero address");
-        require(_DBK != address(0), "DBKCrowdsale: address is the zero address");
-        require(_stablecoin != address(0), "DBKCrowdsale: address is the zero address");
-        require(_admin != address(0), "DBKCrowdsale: address is the zero address");
+        require(
+            _wallet != address(0),
+            "DBKCrowdsale: wallet is the zero address"
+        );
+        require(
+            _DBK != address(0),
+            "DBKCrowdsale: address is the zero address"
+        );
+        require(
+            _stablecoin != address(0),
+            "DBKCrowdsale: address is the zero address"
+        );
+        require(
+            _admin != address(0),
+            "DBKCrowdsale: address is the zero address"
+        );
 
         //set the cap for the crowdsale (maximum sold DBK)
         cap = _cap;
 
         //rate : number of tokens per stable coin
-        //1:1 -> 1e6 = 1e18, therefore 1e12 tokens per stablecoin if 1:1        
+        //1:1 -> 1e6 = 1e18, therefore 1e12 tokens per stablecoin if 1:1
         rate = _rate; //token/stablecoin
 
         //where funds are forwarded
-       	wallet = _wallet;
+        wallet = _wallet;
 
-       	//set DBK token
-       	DBK = IDBKToken(_DBK);
+        //set DBK token
+        DBK = IDBKToken(_DBK);
 
-       	//set payment token
-       	stablecoin = IERC20Upgradeable(_stablecoin);
+        //set payment token
+        stablecoin = IERC20Upgradeable(_stablecoin);
 
-       	//setup roles
+        //setup roles
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _setupRole(ADMIN_ROLE, _admin);
     }
 
-    
     /**
      * @dev fallback function ***DO NOT OVERRIDE***
      * Note that other contracts will transfer funds with a base gas stipend
      * of 2300, which is not enough to call buyTokens. Consider calling
      * buyTokens directly when purchasing tokens from a contract.
      */
-    receive () external payable {
+    receive() external payable {
         revert("DBKStableCoinCrowdsale: Doese not accept ETH");
     }
-
 
     /**
      * @return the token being sold.
@@ -109,8 +133,12 @@ contract DBKCrowdsale is Initializable, PausableUpgradeable, AccessControlUpgrad
     //  * another `nonReentrant` function.
     //  * @param beneficiary Recipient of the token purchase
     //  * @param coinAmount Amount of stablecoin to convert to DBK
-     
-    function buyTokens(address beneficiary, uint256 coinAmount) public nonReentrant whenNotPaused {
+
+    function buyTokens(address beneficiary, uint256 coinAmount)
+        public
+        nonReentrant
+        whenNotPaused
+    {
         _preValidatePurchase(beneficiary, coinAmount);
 
         // calculate token amount to be created
@@ -120,13 +148,16 @@ contract DBKCrowdsale is Initializable, PausableUpgradeable, AccessControlUpgrad
         amountRaised = amountRaised.add(coinAmount);
 
         _processPurchase(beneficiary, tokensForBeneficiary);
-        emit TokensPurchased(_msgSender(), beneficiary, coinAmount, tokensForBeneficiary);
+        emit TokensPurchased(
+            _msgSender(),
+            beneficiary,
+            coinAmount,
+            tokensForBeneficiary
+        );
 
         //forward stablecoin
         _forwardFunds(coinAmount);
-        
     }
-
 
     /**
      * @dev Validation of an incoming purchase. Use require statements to revert state when conditions are not met.
@@ -137,24 +168,42 @@ contract DBKCrowdsale is Initializable, PausableUpgradeable, AccessControlUpgrad
      * @param beneficiary Address performing the token purchase
      * @param coinAmount Value in coin to spend in the purchase
      */
-    function _preValidatePurchase(address beneficiary, uint256 coinAmount) internal virtual view {
-        require(beneficiary != address(0), "DBKCrowdsale: beneficiary is the zero address");
+    function _preValidatePurchase(address beneficiary, uint256 coinAmount)
+        internal
+        view
+        virtual
+    {
+        require(
+            beneficiary != address(0),
+            "DBKCrowdsale: beneficiary is the zero address"
+        );
         require(coinAmount != 0, "DBKCrowdsale: coinAmount is 0");
-        require(stablecoin.allowance(_msgSender(),address(this)) >= coinAmount, "DBKStablecoin: Crowdsale must be approved for this stablecoin!");
-        require(tokensSold.add(coinAmount.mul(rate)) <= cap, "DBKStableCoinCrowdsale: Cap has been reached!");
+        require(
+            stablecoin.allowance(_msgSender(), address(this)) >= coinAmount,
+            "DBKStablecoin: Crowdsale must be approved for this stablecoin!"
+        );
+        require(
+            tokensSold.add(coinAmount.mul(rate)) <= cap,
+            "DBKStableCoinCrowdsale: Cap has been reached!"
+        );
         this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
     }
 
-
-//     /**
-//      * @dev Source of tokens. Override this method to modify the way in which the crowdsale ultimately gets and sends
-//      * its tokens.
-//      * @param beneficiary Address performing the token purchase
-//      * @param tokenAmount Number of tokens to be emitted
-//      */
-    function _deliverTokens(address beneficiary, uint256 tokenAmount) internal virtual {
+    //     /**
+    //      * @dev Source of tokens. Override this method to modify the way in which the crowdsale ultimately gets and sends
+    //      * its tokens.
+    //      * @param beneficiary Address performing the token purchase
+    //      * @param tokenAmount Number of tokens to be emitted
+    //      */
+    function _deliverTokens(address beneficiary, uint256 tokenAmount)
+        internal
+        virtual
+    {
         // Potentially dangerous assumption about the type of the token.
-        require(DBK.mint(beneficiary, tokenAmount), "DBKCrowdsale: minting failed");
+        require(
+            DBK.mint(beneficiary, tokenAmount),
+            "DBKCrowdsale: minting failed"
+        );
     }
 
     /**
@@ -163,19 +212,24 @@ contract DBKCrowdsale is Initializable, PausableUpgradeable, AccessControlUpgrad
      * @param beneficiary Address receiving the tokens
      * @param beneficiaryAmount Number of tokens to be purchased
      */
-    function _processPurchase(address beneficiary, uint256 beneficiaryAmount) internal {
+    function _processPurchase(address beneficiary, uint256 beneficiaryAmount)
+        internal
+    {
         _deliverTokens(beneficiary, beneficiaryAmount);
     }
-
 
     /**
      * @dev Override to extend the way in which ether is converted to tokens.
      * @param coinAmount Value in coin to be converted into tokens
      * @return Number of tokens that can be purchased with the specified _weiAmount
      */
-    function _getTokenAmount(uint256 coinAmount) internal view returns (uint256) {
-    	//rate = tokens/stablecoin
-      return coinAmount.mul(rate);
+    function _getTokenAmount(uint256 coinAmount)
+        internal
+        view
+        returns (uint256)
+    {
+        //rate = tokens/stablecoin
+        return coinAmount.mul(rate);
     }
 
     /**
@@ -185,51 +239,56 @@ contract DBKCrowdsale is Initializable, PausableUpgradeable, AccessControlUpgrad
         stablecoin.transferFrom(_msgSender(), wallet, coinAmount);
     }
 
-
     modifier onlyAdmin() {
-        require(hasRole(ADMIN_ROLE, _msgSender()), "DBKCrowdsale: must have admin role to use this function");  
+        require(
+            hasRole(ADMIN_ROLE, _msgSender()),
+            "DBKCrowdsale: must have admin role to use this function"
+        );
         _;
     }
 
     //only admin function:
     //Pause/Unpase functionality
-    function pause() public onlyAdmin{
-    	_pause();
-    }
-    function _pause() internal override onlyAdmin{
-    	super._pause();
-    }
-    function unpause() public onlyAdmin{
-    	_unpause();
-    }
-    function _unpause() internal override onlyAdmin{
-    	super._unpause();
+    function pause() public onlyAdmin {
+        _pause();
     }
 
-
-    function changePaymentToken(address _stablecoin) external whenPaused onlyAdmin {
-    		stablecoin = IERC20Upgradeable(_stablecoin);
-    		emit PaymentTokenChanged(address(stablecoin));
+    function _pause() internal override onlyAdmin {
+        super._pause();
     }
 
+    function unpause() public onlyAdmin {
+        _unpause();
+    }
+
+    function _unpause() internal override onlyAdmin {
+        super._unpause();
+    }
+
+    function changePaymentToken(address _stablecoin)
+        external
+        whenPaused
+        onlyAdmin
+    {
+        stablecoin = IERC20Upgradeable(_stablecoin);
+        emit PaymentTokenChanged(address(stablecoin));
+    }
 
     //Rate changing -- only when paused
-    function changeRate(uint256 coinRate) external whenPaused onlyAdmin{
-    		rate = coinRate;
-    		emit RateChange(rate);
+    function changeRate(uint256 coinRate) external whenPaused onlyAdmin {
+        rate = coinRate;
+        emit RateChange(rate);
     }
 
     //Cap Raising -- only when paused
-    function raiseCap(uint256 _cap) external whenPaused onlyAdmin{
-    		cap = cap.add(_cap);
-    		emit CapChange(cap);
+    function raiseCap(uint256 _cap) external whenPaused onlyAdmin {
+        cap = cap.add(_cap);
+        emit CapChange(cap);
     }
 
-
-    function isAdmin(address _address) public view returns(bool){
-    	return hasRole(ADMIN_ROLE,_address);
+    function isAdmin(address _address) public view returns (bool) {
+        return hasRole(ADMIN_ROLE, _address);
     }
-
 
     function addAdmin(address _address) public onlyAdmin {
         _setupRole(ADMIN_ROLE, _address);
@@ -242,7 +301,11 @@ contract DBKCrowdsale is Initializable, PausableUpgradeable, AccessControlUpgrad
      * @param recipient The recipient that the tokens will be sent to.
      * @param amount How many tokens to rescue.
      */
-    function adminRescueTokens(address _token, address recipient, uint256 amount) external onlyAdmin {
+    function adminRescueTokens(
+        address _token,
+        address recipient,
+        uint256 amount
+    ) external onlyAdmin {
         require(_token != address(0x0), "zero address");
         require(recipient != address(0x0), "bad recipient");
         require(amount > 0, "zero amount");
@@ -254,5 +317,4 @@ contract DBKCrowdsale is Initializable, PausableUpgradeable, AccessControlUpgrad
     }
 
     uint256[49] private __gap;
-
 }
