@@ -300,6 +300,19 @@ contract DBKStake is
                 "DBKStake: Amount attmepting to withdraw exceeds the allocated awards!"
             );
         }
+
+        if (token == address(stakingToken)) {
+            //  this check still does not guarantee that an overwithdraw will not occur
+            //  if over withdraw occurs, contract assumes the overwithdraw amount will
+            //  be manually depositted into the contract via an ERC20 transfer
+            require(
+                amount <
+                    IERC20Upgradeable(token).balanceOf(address(this)).sub(
+                        _totalStakingSupplyOnCycle[currentCycle]
+                    ),
+                "DBKStake: Amount attmepting to withdraw exceeds the allocated awards!"
+            );
+        }
         bool ok = IERC20Upgradeable(token).transfer(recipient, amount);
         require(ok, "transfer fail");
 
